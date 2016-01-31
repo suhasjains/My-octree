@@ -1,4 +1,4 @@
-#Myoctree - Mesh generator for AMR grids
+# Myoctree - Mesh generator for AMR grids
 
 
  * Octree data structure 
@@ -7,6 +7,6 @@
 
 
 
-Change log
+## Change log
 
  * Adding octree class 
