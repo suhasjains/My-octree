@@ -9,4 +9,17 @@
 
 ## Change log
 
- * Adding octree class 
+ * Added octree class
+ * Added parent connection
+ * Added children connection
+ * Added refine function
+ * Added coarsen function
+ * Added siblings
+ * Added level
+ * Added dimensions
+
+## Things to add
+
+ * Add neighbors
+ * output
+ * boundary flags 

@@ -4,7 +4,7 @@ RUNDIR	:= ../RUN/
 
 OBJECTS =   $(OBDIR)octree.o 
 
-HEADER 	:= octree.h 
+HEADER 	:= octree.h block.h 
 
 .DEFAULT:
 

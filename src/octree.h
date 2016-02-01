@@ -1,8 +1,10 @@
 #ifndef MYOCTREE_OCTREE_H_
 #define MYOCTREE_OCTREE_H_
 #include <stdio.h>
-#include <string.h>
+//#include <string.h>
 #include <list>
+#include "block.h"
+
 
 namespace myoctree {
 
@@ -10,97 +12,15 @@ namespace myoctree {
 int block_counter;
 int level;
 class octree;
-class block;
-class Field;
-std::list<octree> blocks;
+std::list<octree*> nodes;
 
-
-//Block class
-class block {
-
-        //Field class
-        class Field {
-
-                public:
-                //Members
-                int Nx,Ny,Nz;              //size
-                int N;                  //size
-                double ***val;            //values
-
-                //Constructors
-                //allocates memory to the field variables equal to the number of cells in the domain
-                Field( int N_x, int N_y, int N_z ) : Nx(N_x), Ny(N_y), Nz(N_z) {
-
-                        N = N_x*N_y*N_z;
-                        **val = new double [Nx];
-                        for(int i=0;i<Nx;i++) {
-                                *val[i] = new double [Ny];
-                                for(int j=0;j<Ny;j++) {
-                                        val[i][j] = new double [Nz];
-                                }
-                        }
-                }	
-
-		Field() {
-
-                        Nx = 0;
-                        Ny = 0;
-                        Nz = 0;
-                        N = Nx*Ny*Nz;
-                        **val = new double [Nx];
-                        for(int i=0;i<Nx;i++) {
-                                *val[i] = new double [Ny];
-                                for(int j=0;j<Ny;j++) {
-                                        val[i][j] = new double [Nz];
-                                }
-                        }
-                }
-
-
-        	//Copy constructor
-                Field(const Field &obj) {
-
-
-                        Nx = obj.Nx;
-               		Ny = obj.Ny;
-                        Nz = obj.Nz;
-                        N = obj.N;
-                        memcpy(**val,**(obj.val),sizeof(double)*Nx);
-                        for(int i=0;i<Nx;i++) {
-                                memcpy(*val[i],*(obj.val)[i],sizeof(double)*Ny);
-                                for(int j=0;j<Ny;j++) {
-                                        memcpy(val[i][j],(obj.val)[i][j],sizeof(double)*Nz);
-                                }
-                        }
-          	}
-   		
-   		
-   		//Destructor
-               ~Field() {
-
-                       for (int i = 0; i < Nx; ++i) {
-                               for (int j = 0; j < Ny; ++j)
-                                       delete [] val[i][j];
-
-                               delete [] *val[i];
-                               }
-
-                       delete [] **val;
-               }
-
-               private:
-               protected:
-
-       };
-
-};
 
 
 //octree class
 class octree {
 
 	public:
-	//constructors
+	//default constructor
 	octree() {
 
 		for(int i=0; i<2; i++) { 
@@ -113,13 +33,42 @@ class octree {
 		if(level==0)
 			parent = NULL;
 
+		//creating block to assign it to the data
 		block new_block;
-	//	blocks.push_back(new_block);
-		data = &new_block;		
-	
+		block_data = &new_block;		
 
+		//make current pointer point to the current object
 		current = this;	
+		nodes.push_back(current);
+	}
+	
+	//parametrized constructor
+	octree( double x1, double x2, double y1, double y2, double z1, double z2 ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2)   {
 
+		for(int i=0; i<2; i++) { 
+			for(int j=0; j<2; j++) { 
+				for(int k=0; k<2; k++)  
+					children[i][j][k] = NULL;	
+			}
+		}
+
+		if(level==0)
+			parent = NULL;
+
+
+		x_centre = (x_min + x_max ) / 2.0;
+		y_centre = (y_min + y_max ) / 2.0;
+		z_centre = (z_min + z_max ) / 2.0;
+		
+
+		//creating block to assign it to the data
+		block new_block(x_min, x_max, y_min, y_max, z_min, z_max);
+		block_data = &new_block;		
+
+
+		//make current pointer point to the current object
+		current = this;	
+		nodes.push_back(current);
 	}
 
 	//member functions	
@@ -129,7 +78,7 @@ class octree {
 		
 		//define new octree nodes	
 		octree node[8];
-	
+		
 		//assign newly created nodes to children 
 		int local_node_count = 0;	
 		for(k=0; k<2; k++) { 
@@ -137,6 +86,46 @@ class octree {
 				for(i=0; i<2; i++) { 
 					this->children[i][j][k] = &node[local_node_count];
 					local_node_count++;	
+				}
+			}
+		}
+	
+		//assign dimensions to newly created children	
+		for(k=0; k<2; k++) { 
+			for(j=0; j<2; j++) { 
+				for(i=0; i<2; i++) {
+
+					if(i==0) { 
+						children[i][j][k]->block_data->x_min = this->x_min; 	
+						children[i][j][k]->block_data->x_max = this->x_centre; 	
+					}
+					else {
+						children[i][j][k]->block_data->x_min = this->x_centre; 	
+						children[i][j][k]->block_data->x_max = this->x_max; 	
+					} 
+				
+					if(j==0) {	
+						children[i][j][k]->block_data->y_min = this->y_min;	
+						children[i][j][k]->block_data->y_max = this->y_centre;	
+					}
+					else {
+						children[i][j][k]->block_data->y_min = this->y_centre;	
+						children[i][j][k]->block_data->y_max = this->y_max;	
+					}
+					
+					if(k==0) {
+						children[i][j][k]->block_data->z_min = this->z_min;	
+						children[i][j][k]->block_data->z_max = this->z_centre;	
+					}
+					else {
+						children[i][j][k]->block_data->z_min = this->z_centre;	
+						children[i][j][k]->block_data->z_max = this->z_max;	
+					}
+				
+
+					children[i][j][k]->block_data->calculate_grid_size();
+					children[i][j][k]->block_data->calculate_centre();
+
 				}
 			}
 		}
@@ -182,7 +171,7 @@ class octree {
 	octree *children[2][2][2];
 	
 	//each node stores a block of grid cells
-	block *data;
+	block *block_data;
 
 	//pointer to the parent
 	octree *parent;
@@ -195,6 +184,12 @@ class octree {
 
 	//siblings
 	octree *siblings[7];
+
+	//node's block dimensions - temporary variables
+	double x_centre, y_centre, z_centre;
+	double x_min, x_max;
+	double y_min, y_max;
+	double z_min, z_max;
 
 	//function to test if leaf node
 	bool isLeafNode() {
