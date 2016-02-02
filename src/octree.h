@@ -5,14 +5,13 @@
 #include <list>
 #include "block.h"
 
-
 namespace myoctree {
 
 
-int block_counter;
-int level;
+extern int block_counter;
+extern int level;
 class octree;
-std::list<octree*> nodes;
+extern std::list<octree*> nodes;
 
 
 
@@ -65,6 +64,7 @@ class octree {
 		block new_block(x_min, x_max, y_min, y_max, z_min, z_max);
 		block_data = &new_block;		
 
+		printf("dx=%g, dy=%g, dz=%g \n", block_data->dx, block_data->dy, block_data->dz);
 
 		//make current pointer point to the current object
 		current = this;	
@@ -165,7 +165,27 @@ class octree {
 		delete this;		
 		
 	}
+	
 
+	//function to test if leaf node
+	bool isLeafNode() {
+
+		return children[0][0][0] == NULL;
+	} 
+
+	//function to test if root node
+	bool isRootNode() {
+
+		return parent == NULL;
+	} 
+		
+	//function to access block_data
+	block* get_block_data() {
+		
+		return block_data;
+	}
+
+	
 	private:
 	//each node has upto 8 children (2^3 for 3 dimensions) 
 	octree *children[2][2][2];
@@ -191,23 +211,13 @@ class octree {
 	double y_min, y_max;
 	double z_min, z_max;
 
-	//function to test if leaf node
-	bool isLeafNode() {
-
-		return children[0][0][0] == NULL;
-	} 
-
-	//function to test if root node
-	bool isRootNode() {
-
-		return parent == NULL;
-	} 
-			
+	
 	protected:	
 
 };
 
-
+//function declaration
+void write_vtk(std::list<octree*>&);
 
 }
 #endif

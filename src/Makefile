@@ -2,9 +2,9 @@ NAME 	:= myoctree
 OBDIR	:= ../OBJ/
 RUNDIR	:= ../RUN/
 
-OBJECTS =   $(OBDIR)octree.o 
+OBJECTS =   $(OBDIR)octree.o $(OBDIR)output.o 
 
-HEADER 	:= octree.h block.h 
+HEADER 	:= octree.h block.h output.h 
 
 .DEFAULT:
 
@@ -34,6 +34,9 @@ $(OBDIR)octree.o: octree.cpp $(HEADER)
 	@test -d $(OBDIR) || mkdir $(OBDIR)        
 	$(CXX) -c $(FLAGS) -o $(OBDIR)octree.o octree.cpp
 
+$(OBDIR)output.o: output.cpp $(HEADER)
+	@test -d $(OBDIR) || mkdir $(OBDIR)        
+	$(CXX) -c $(FLAGS) -o $(OBDIR)output.o output.cpp
 copy:
 	cp -f clean $(RUNDIR)/.	
 clean: 		

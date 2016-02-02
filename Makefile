@@ -3,3 +3,7 @@ all:
 
 clean: 
 	cd src; make clean
+
+cleanall: 
+	rm -rf RUN/
+	rm -rf OBJ/

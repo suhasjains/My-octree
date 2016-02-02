@@ -1,40 +1,50 @@
 #include "octree.h"
-#include "block.h"
+#include <stdio.h>
+
 namespace myoctree {
 
-void write_output(Domain domain, int proc_rank) {
-
-        int i,l,m;
-        int N_local = domain.u->N;
-        int N_local_x = domain.u->Nx;
-	int N_local_y = domain.u->Ny;
-        FILE *fp;
-
-        char filename[10];
-
-	//offset of cell numbering for the subdomain
-        offset[X_DIR] = P_grid_coord[X_DIR] * (N_local_x-2);
-        offset[Y_DIR] = P_grid_coord[Y_DIR] * (N_local_y-2);
+void write_vtk(std::list<octree*>& nodes) {
 
 
-        sprintf(filename, "data%d", proc_rank);
+	int Npx = NX_BLOCK + 1;
+	int Npy = NY_BLOCK + 1;
+	int Npz = NZ_BLOCK + 1;
+	
+
+	char filename[30];
+        sprintf(filename, "output.vtk");
+        FILE *fp = fopen(filename, "w");
+
+        fprintf(fp,"# vtk DataFile Version 3.0\n");
+        fprintf(fp,"particle point data\n");
+        fprintf(fp,"ASCII\n");
+        fprintf(fp,"DATASET STRUCTURED_GRID\n");
+        fprintf(fp,"DIMENSIONS %d %d %d\n",Npx, Npy, Npz);
+        fprintf(fp,"POINTS %d double\n", Npx * Npy * Npz);
+
+	for (std::list<octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
+    	
+		block* block_data = (*iterator)->get_block_data();
+		double dx = block_data->dx;
+		double dy = (*iterator)->get_block_data()->dy;
+		double dz = block_data->dz;
+		double x_min = block_data->x_min;		
+		double y_min = block_data->y_min;		
+		double z_min = block_data->z_min;		
+
+		printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
+
+	        for(int k = 0; k<Npz; k++) {
+	                for(int j = 0; j<Npy; j++) {
+	                        for(int i = 0; i<Npx ; i++) {
+	                                fprintf(fp,"%2.8lf %2.8lf %2.8lf\n",x_min + i*dx, y_min + j*dy, z_min + k*dz);
+	                        }
+	                }
+	        }
 
 
-        fp = fopen(filename, "w");
-
-
-        for(i=0;i<N_local;i++){
-                if(domain.u->bc[i] == NONE){
-                        l=i%N_local_x;
-                        m=(int) i/N_local_x;
-
-                        fprintf(fp,"%lf %lf %lf\n", (l+offset[X_DIR])*(domain.constant->h), (m+offset[Y_DIR])*(domain.constant->h), domain.u->val[i]);
-                }
-        }
-
-        fclose(fp);
-
-
+	}
+//	fclose(fp);
 }
 
 }
