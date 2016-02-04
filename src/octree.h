@@ -1,8 +1,8 @@
 #ifndef MYOCTREE_OCTREE_H_
 #define MYOCTREE_OCTREE_H_
 #include <stdio.h>
-//#include <string.h>
-#include <list>
+//#include <list>
+#include <vector>
 #include "block.h"
 
 namespace myoctree {
@@ -11,7 +11,8 @@ namespace myoctree {
 extern int block_counter;
 extern int level;
 class octree;
-extern std::list<octree*> nodes;
+//extern std::list<octree*> nodes;
+extern std::vector<octree*> nodes;
 
 
 
@@ -38,7 +39,7 @@ class octree {
 
 		//make current pointer point to the current object
 		current = this;	
-		nodes.push_back(current);
+		nodes.push_back(this);
 	}
 	
 	//parametrized constructor
@@ -68,7 +69,7 @@ class octree {
 
 		//make current pointer point to the current object
 		current = this;	
-		nodes.push_back(current);
+		nodes.push_back(this);
 	}
 
 	//member functions	
@@ -217,7 +218,8 @@ class octree {
 };
 
 //function declaration
-void write_vtk(std::list<octree*>&);
+//void write_vtk(std::list<octree*>&);
+void write_vtk(std::vector<octree*>&);
 
 }
 #endif

@@ -3,7 +3,8 @@
 
 namespace myoctree {
 
-void write_vtk(std::list<octree*>& nodes) {
+//void write_vtk(std::list<octree*>& nodes) {
+void write_vtk(std::vector<octree*>& nodes) {
 
 
 	int Npx = NX_BLOCK + 1;
@@ -22,11 +23,13 @@ void write_vtk(std::list<octree*>& nodes) {
         fprintf(fp,"DIMENSIONS %d %d %d\n",Npx, Npy, Npz);
         fprintf(fp,"POINTS %d double\n", Npx * Npy * Npz);
 
-	for (std::list<octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
+	//for (std::list<octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
+	for (int n = 0; n< nodes.size(); n++) {
     	
-		block* block_data = (*iterator)->get_block_data();
+		//block* block_data = (*iterator)->get_block_data();
+		block* block_data = nodes[n]->get_block_data();
 		double dx = block_data->dx;
-		double dy = (*iterator)->get_block_data()->dy;
+		double dy = block_data->dy;
 		double dz = block_data->dz;
 		double x_min = block_data->x_min;		
 		double y_min = block_data->y_min;		

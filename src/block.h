@@ -72,10 +72,10 @@ class Field {
                         for (int j = 0; j < Ny; ++j)
                                 delete [] val[i][j];
 
-                        delete [] *val[i];
+                        delete [] val[i];
                         }
 
-                delete [] **val;
+                delete [] val;
         }
 
         private:
@@ -103,7 +103,7 @@ class block {
 
 
 	//parametrized constructor
-	block( double x1, double x2, double y1, double y2, double z1, double z2 ) : x_min(x1), x_max(x2), y_min(y1    ), y_max(y2), z_min(z1), z_max(z2) {
+	block( double x1, double x2, double y1, double y2, double z1, double z2 ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2) {
 		
 		//dx = ( x_max - x_min ) / iNx; 
 		//dy = ( y_max - y_min ) / iNy; 
@@ -114,13 +114,16 @@ class block {
 		dz = 3.0;
 		
 		printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
+		
 
 		x_centre = (x_min + x_max ) / 2.0;
                 y_centre = (y_min + y_max ) / 2.0;
                 z_centre = (z_min + z_max ) / 2.0;
+		
 
 		Field mesh_field(iNx+2*PAD,iNy+2*PAD,iNz+2*PAD);
-		mesh = &mesh_field;	
+		mesh = &mesh_field;
+
 	}
 
 	//default constructor
@@ -128,7 +131,13 @@ class block {
 	
 		Field mesh_field(iNx+2*PAD,iNy+2*PAD,iNz+2*PAD);
 		mesh = &mesh_field;	
-	}	
+	}
+
+	//~block() {
+		
+		
+
+	//}	
 		
 	//member function
 	void calculate_grid_size() {
