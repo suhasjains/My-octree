@@ -27,15 +27,16 @@ void write_vtk(std::vector<octree*>& nodes) {
 	for (int n = 0; n< nodes.size(); n++) {
     	
 		//block* block_data = (*iterator)->get_block_data();
-		block* block_data = nodes[n]->get_block_data();
-		double dx = block_data->dx;
-		double dy = block_data->dy;
-		double dz = block_data->dz;
+		block* block_data = nodes[n]->block_data;
+		int level = nodes[n]->block_data->mesh->N;
+		double dx = block_data->x_min;
+		double dy = block_data->y_min;
+		double dz = block_data->z_min;
 		double x_min = block_data->x_min;		
 		double y_min = block_data->y_min;		
 		double z_min = block_data->z_min;		
 
-		printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
+		printf("dx=%lf dy=%lf, dz=%lf level =%d\n", dx, dy, dz, level);
 
 	        for(int k = 0; k<Npz; k++) {
 	                for(int j = 0; j<Npy; j++) {

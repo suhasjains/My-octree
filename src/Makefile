@@ -12,7 +12,7 @@ INCPATH	=	-I ~/
 
 LIBPATH	= 	-L ~/
 
-LIBS	=	-lm 
+LIBS	=	-lm  
 
 CXX	:=	mpic++
 CXXFLAGS:= 	-g  $(INCPATH) -Wall -O3

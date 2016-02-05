@@ -8,8 +8,8 @@
 namespace myoctree {
 
 
-extern int block_counter;
-extern int level;
+//extern int block_counter;
+//extern int level;
 class octree;
 //extern std::list<octree*> nodes;
 extern std::vector<octree*> nodes;
@@ -43,7 +43,7 @@ class octree {
 	}
 	
 	//parametrized constructor
-	octree( double x1, double x2, double y1, double y2, double z1, double z2 ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2)   {
+	octree( double x1, double x2, double y1, double y2, double z1, double z2, int l ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2), level(l)   {
 
 		for(int i=0; i<2; i++) { 
 			for(int j=0; j<2; j++) { 
@@ -66,10 +66,39 @@ class octree {
 		block_data = &new_block;		
 
 		printf("dx=%g, dy=%g, dz=%g \n", block_data->dx, block_data->dy, block_data->dz);
+		printf("hi69\n");
 
 		//make current pointer point to the current object
 		current = this;	
+		printf("hi73\n");
+		
+
 		nodes.push_back(this);
+		printf("hi77\n");
+
+	}
+
+
+	~octree() {
+//
+//		for(int i=0; i<2; i++) {
+//                        for(int j=0; j<2; j++) {
+//                                for(int k=0; k<2; k++)
+//                                        delete children[i][j][k];
+//                        }
+//                }
+//
+//
+//
+//  		//delete [] children;
+//
+//		delete block_data;
+//
+//		delete parent;
+//
+//		delete current;
+//
+//		//delete [] siblings;
 	}
 
 	//member functions	
@@ -187,7 +216,7 @@ class octree {
 	}
 
 	
-	private:
+	//private:
 	//each node has upto 8 children (2^3 for 3 dimensions) 
 	octree *children[2][2][2];
 	

@@ -16,14 +16,15 @@ class Field {
         //Members
         int Nx,Ny,Nz;              //size
         int N;                  //size
-        double ***val;            //values
+        double*** val = NULL;            //values
 
         //Constructors
         //allocates memory to the field variables equal to the number of cells in the domain
         Field( int N_x, int N_y, int N_z ) : Nx(N_x), Ny(N_y), Nz(N_z) {
 
-                N = N_x*N_y*N_z;
-                val = new double** [Nx];
+                N = 10;
+              	//val = new double [10][10][10];
+		val = new double** [Nx];
                 for(int i=0;i<Nx;i++) {
                         val[i] = new double* [Ny];
                         for(int j=0;j<Ny;j++) {
@@ -68,14 +69,14 @@ class Field {
         //Destructor
         ~Field() {
 
-                for (int i = 0; i < Nx; ++i) {
-                        for (int j = 0; j < Ny; ++j)
-                                delete [] val[i][j];
+ //               for (int i = 0; i < Nx; ++i) {
+ //                       for (int j = 0; j < Ny; ++j)
+ //                               delete [] val[i][j];
 
-                        delete [] val[i];
-                        }
+ //                       delete [] val[i];
+ //                       }
 
-                delete [] val;
+ //               delete [] val;
         }
 
         private:
@@ -100,6 +101,7 @@ class block {
 	static int iNy;
 	static int iNz;
 	double dx, dy, dz;
+	//Field mesh(10+2*PAD,10+2*PAD,10+2*PAD);
 
 
 	//parametrized constructor
@@ -112,6 +114,9 @@ class block {
 		dx = 1.0;
 		dy = 2.0;
 		dz = 3.0;
+		x_min = 1.0;
+		y_min = 2.0;
+		z_min = 3.0;
 		
 		printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
 		
@@ -120,9 +125,11 @@ class block {
                 y_centre = (y_min + y_max ) / 2.0;
                 z_centre = (z_min + z_max ) / 2.0;
 		
-
+		mesh = new Field;
 		Field mesh_field(iNx+2*PAD,iNy+2*PAD,iNz+2*PAD);
-		mesh = &mesh_field;
+		*mesh = mesh_field;
+
+		printf("N=%d\n",mesh->N);
 
 	}
 
@@ -133,11 +140,11 @@ class block {
 		mesh = &mesh_field;	
 	}
 
-	//~block() {
+	~block() {
 		
-		
+//		delete mesh;	
 
-	//}	
+	}	
 		
 	//member function
 	void calculate_grid_size() {
@@ -154,10 +161,6 @@ class block {
                 this->z_centre = (this->z_min + this->z_max ) / 2.0;
 	}
 };
-
-//extern int block::iNx = NX_BLOCK;
-//extern int block::iNy = NY_BLOCK;
-//extern int block::iNz = NZ_BLOCK; 
 
 
 }
