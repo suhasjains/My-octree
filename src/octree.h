@@ -34,8 +34,9 @@ class octree {
 			parent = NULL;
 
 		//creating block to assign it to the data
-		block new_block;
-		block_data = &new_block;		
+		block_data = new Block; 
+		Block new_block;
+		*block_data = new_block;		
 
 		//make current pointer point to the current object
 		current = this;	
@@ -62,8 +63,9 @@ class octree {
 		
 
 		//creating block to assign it to the data
-		block new_block(x_min, x_max, y_min, y_max, z_min, z_max);
-		block_data = &new_block;		
+		block_data = new Block; 
+		Block new_block(x_min, x_max, y_min, y_max, z_min, z_max);
+		*block_data = new_block;		
 
 		printf("dx=%g, dy=%g, dz=%g \n", block_data->dx, block_data->dy, block_data->dz);
 		printf("hi69\n");
@@ -80,25 +82,25 @@ class octree {
 
 
 	~octree() {
-//
+
 //		for(int i=0; i<2; i++) {
 //                        for(int j=0; j<2; j++) {
 //                                for(int k=0; k<2; k++)
 //                                        delete children[i][j][k];
 //                        }
 //                }
-//
-//
-//
-//  		//delete [] children;
-//
+
+
+
+  		//delete [] children;
+
 //		delete block_data;
-//
+
 //		delete parent;
-//
+
 //		delete current;
-//
-//		//delete [] siblings;
+
+		//delete [] siblings;
 	}
 
 	//member functions	
@@ -210,7 +212,7 @@ class octree {
 	} 
 		
 	//function to access block_data
-	block* get_block_data() {
+	Block* get_block_data() {
 		
 		return block_data;
 	}
@@ -221,7 +223,7 @@ class octree {
 	octree *children[2][2][2];
 	
 	//each node stores a block of grid cells
-	block *block_data;
+	Block *block_data;
 
 	//pointer to the parent
 	octree *parent;

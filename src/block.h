@@ -16,13 +16,13 @@ class Field {
         //Members
         int Nx,Ny,Nz;              //size
         int N;                  //size
-        double*** val = NULL;            //values
+        double*** val;            //values
 
         //Constructors
         //allocates memory to the field variables equal to the number of cells in the domain
         Field( int N_x, int N_y, int N_z ) : Nx(N_x), Ny(N_y), Nz(N_z) {
 
-                N = 10;
+                N = Nx*Ny*Nz;
               	//val = new double [10][10][10];
 		val = new double** [Nx];
                 for(int i=0;i<Nx;i++) {
@@ -69,15 +69,15 @@ class Field {
         //Destructor
         ~Field() {
 
- //               for (int i = 0; i < Nx; ++i) {
- //                       for (int j = 0; j < Ny; ++j)
- //                               delete [] val[i][j];
-
- //                       delete [] val[i];
- //                       }
-
- //               delete [] val;
-        }
+//               	for (int i = 0; i < Nx; ++i) {
+//               		for (int j = 0; j < Ny; ++j)
+//                            	delete [] val[i][j];
+//
+//                       	delete [] val[i];
+//                       	}
+//
+//               	delete [] val;
+       }
 
         private:
         protected:
@@ -87,7 +87,7 @@ class Field {
 
 
 //Block class
-class block {
+class Block {
 
 	public:
 
@@ -101,30 +101,22 @@ class block {
 	static int iNy;
 	static int iNz;
 	double dx, dy, dz;
-	//Field mesh(10+2*PAD,10+2*PAD,10+2*PAD);
 
 
 	//parametrized constructor
-	block( double x1, double x2, double y1, double y2, double z1, double z2 ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2) {
+	Block( double x1, double x2, double y1, double y2, double z1, double z2 ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2) {
 		
-		//dx = ( x_max - x_min ) / iNx; 
-		//dy = ( y_max - y_min ) / iNy; 
-		//dz = ( z_max - z_min ) / iNz; 
-
-		dx = 1.0;
-		dy = 2.0;
-		dz = 3.0;
-		x_min = 1.0;
-		y_min = 2.0;
-		z_min = 3.0;
+		dx = ( x_max - x_min ) / iNx; 
+		dy = ( y_max - y_min ) / iNy; 
+		dz = ( z_max - z_min ) / iNz; 
 		
 		printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
-		
 
 		x_centre = (x_min + x_max ) / 2.0;
                 y_centre = (y_min + y_max ) / 2.0;
                 z_centre = (z_min + z_max ) / 2.0;
-		
+	
+		//dynamical allocation of the object 	
 		mesh = new Field;
 		Field mesh_field(iNx+2*PAD,iNy+2*PAD,iNz+2*PAD);
 		*mesh = mesh_field;
@@ -134,13 +126,36 @@ class block {
 	}
 
 	//default constructor
-	block() {
+	Block() {
 	
+		mesh = new Field;
 		Field mesh_field(iNx+2*PAD,iNy+2*PAD,iNz+2*PAD);
-		mesh = &mesh_field;	
+		*mesh = mesh_field;	
 	}
 
-	~block() {
+	//Copy constructor
+        Block(const Block &obj) {
+
+                x_centre = obj.x_centre;
+                y_centre = obj.y_centre;
+                z_centre = obj.z_centre;
+                x_min = obj.x_min;
+                y_min = obj.y_min;
+                x_min = obj.x_min;
+                x_max = obj.x_max;
+                y_max = obj.y_max;
+                z_max = obj.z_max;
+                dx = obj.dx;
+                dy = obj.dy;
+                dz = obj.dx;
+                iNx = obj.iNx;
+                iNy = obj.iNy;
+                iNz = obj.iNz;
+		mesh = obj.mesh;
+
+	}
+
+	~Block() {
 		
 //		delete mesh;	
 

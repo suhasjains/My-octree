@@ -2,13 +2,11 @@
 
 namespace myoctree {
 
-//int block_counter;
-//int level;
 //std::list<octree*> nodes;
 std::vector<octree*> nodes;
-int block::iNx = NX_BLOCK;
-int block::iNy = NY_BLOCK;
-int block::iNz = NZ_BLOCK;
+int Block::iNx = NX_BLOCK;
+int Block::iNy = NY_BLOCK;
+int Block::iNz = NZ_BLOCK;
 
 }
 
@@ -17,9 +15,9 @@ using namespace myoctree;
 
 int main(int argc, char **argv) {
 
-	octree root1(0.0,1.0,0.0,1.0,0.0,1.0,5);
+	octree root1(0.0,1.0,0.0,1.0,0.0,1.0,0);
 
-	//nodes.push_back(&root1);	
+	//root1.refine();
 
 	printf("level=%d\n",nodes[0]->level);
 
