@@ -1,10 +1,27 @@
 #include "octree.h"
 #include <stdio.h>
 
-namespace myoctree {
+namespace myOctree {
 
-//void write_vtk(std::list<octree*>& nodes) {
-void write_vtk(std::vector<octree*>& nodes) {
+
+long int get_point(int i, int j, int k) {
+
+	int I = i+1;
+	int J = j+1;
+	int K = k+1;
+	
+	long int n;
+	if(i==0)        n = K * J + I;
+	else            n = K * J * i + I;
+
+
+	return n-1;
+} 
+
+
+void write_vtk(std::list<Octree*>& nodes) {
+//void write_vtk(std::vector<Octree*>& nodes) {
+
 
 
 	int Npx = NX_BLOCK + 1;
@@ -19,19 +36,19 @@ void write_vtk(std::vector<octree*>& nodes) {
         fprintf(fp,"# vtk DataFile Version 3.0\n");
         fprintf(fp,"particle point data\n");
         fprintf(fp,"ASCII\n");
-        fprintf(fp,"DATASET STRUCTURED_GRID\n");
-        fprintf(fp,"DIMENSIONS %d %d %d\n",Npx, Npy, Npz);
-        fprintf(fp,"POINTS %d double\n", Npx * Npy * Npz);
+        fprintf(fp,"DATASET UNSTRUCTURED_GRID\n");
+	long int nPoints = Npx * Npy * Npz * nodes.size();
+	long int nCells = NX_BLOCK * NY_BLOCK * NZ_BLOCK * nodes.size();
+       	long int point[8]; 
+	int node_count = 1;
 
-	//for (std::list<octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
-	for (int n = 0; n< nodes.size(); n++) {
+
+	fprintf(fp,"POINTS %ld double\n", nPoints);
+
+	for (std::list<Octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
     	
-		//Block* block_data = (*iterator)->get_block_data();
-		//printf("hi\n");
-		Block* block_data = nodes[n]->block_data;
-		//printf("hi\n");
-		int N = nodes[n]->block_data->mesh->N;
-		//printf("hi\n");
+		Block* block_data = (*iterator)->get_block_data();
+		int N = block_data->mesh->N;
 		double dx = block_data->dx;
 		double dy = block_data->dy;
 		double dz = block_data->dz;
@@ -51,7 +68,52 @@ void write_vtk(std::vector<octree*>& nodes) {
 
 
 	}
-//	fclose(fp);
+
+	fprintf(fp,"\n\nCELLS %ld %ld\n", nCells, 9*nCells);
+
+        for (std::list<Octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
+
+                for(int k = 0; k<Npz; k++) {
+                        for(int j = 0; j<Npy; j++) {
+                                for(int i = 0; i<Npx ; i++) {
+
+					point[0] = node_count*get_point(i,j,k);
+					point[1] = node_count*get_point(i+1,j,k);
+					point[2] = node_count*get_point(i,j+1,k);
+					point[3] = node_count*get_point(i+1,j+1,k);
+					point[4] = node_count*get_point(i,j,k+1);
+					point[5] = node_count*get_point(i+1,j,k+1);
+					point[6] = node_count*get_point(i,j+1,k+1);
+					point[7] = node_count*get_point(i+1,j+1,k+1);
+	
+                                        fprintf(fp,"8 %ld %ld %ld %ld %ld %ld %ld %ld \n",point[0], point[1], point[2], point[3], point[4], point[5], point[6], point[7]);
+                                }
+                        }
+                }
+
+		node_count++;
+
+        }
+
+
+	fprintf(fp,"\n\nCELL_TYPES %ld\n", nCells);
+
+        for (std::list<Octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
+
+                for(int k = 0; k<Npz; k++) {
+                        for(int j = 0; j<Npy; j++) {
+                                for(int i = 0; i<Npx ; i++) {
+
+                                        fprintf(fp,"11\n");
+                                }
+                        }
+                }
+
+
+        }	
+
+
+
 }
 
 }

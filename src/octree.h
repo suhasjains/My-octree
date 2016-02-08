@@ -1,27 +1,27 @@
 #ifndef MYOCTREE_OCTREE_H_
 #define MYOCTREE_OCTREE_H_
 #include <stdio.h>
-//#include <list>
-#include <vector>
+#include <list>
+//#include <vector>
 #include "block.h"
 
-namespace myoctree {
+namespace myOctree {
 
 
 //extern int block_counter;
 //extern int level;
-class octree;
-//extern std::list<octree*> nodes;
-extern std::vector<octree*> nodes;
+class Octree;
+extern std::list<Octree*> nodes;
+//extern std::vector<Octree*> nodes;
 
 
 
-//octree class
-class octree {
+//Octree class
+class Octree {
 
 	public:
 	//default constructor
-	octree() {
+	Octree() {
 
 		for(int i=0; i<2; i++) { 
 			for(int j=0; j<2; j++) { 
@@ -39,12 +39,12 @@ class octree {
 		*block_data = new_block;		
 
 		//make current pointer point to the current object
-		current = this;	
+	//	current = this;	
 		nodes.push_back(this);
 	}
 	
 	//parametrized constructor
-	octree( double x1, double x2, double y1, double y2, double z1, double z2, int l ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2), level(l)   {
+	Octree( double x1, double x2, double y1, double y2, double z1, double z2, int l ) : x_min(x1), x_max(x2), y_min(y1), y_max(y2), z_min(z1), z_max(z2), level(l)   {
 
 		for(int i=0; i<2; i++) { 
 			for(int j=0; j<2; j++) { 
@@ -67,21 +67,43 @@ class octree {
 		Block new_block(x_min, x_max, y_min, y_max, z_min, z_max);
 		*block_data = new_block;		
 
-		printf("dx=%g, dy=%g, dz=%g \n", block_data->dx, block_data->dy, block_data->dz);
-		printf("hi69\n");
+		//printf("dx=%g, dy=%g, dz=%g \n", block_data->dx, block_data->dy, block_data->dz);
 
 		//make current pointer point to the current object
-		current = this;	
-		printf("hi73\n");
-		
+	//	current = this;	
 
 		nodes.push_back(this);
-		printf("hi77\n");
 
 	}
 
+	//Copy constructor
+        Octree(const Octree &obj) {
 
-	~octree() {
+
+                x_min = obj.x_min;
+                y_min = obj.y_min;
+                z_min = obj.z_min;
+                x_max = obj.x_max;
+                y_max = obj.y_max;
+                z_max = obj.z_max;
+                x_centre = obj.x_centre;
+                y_centre = obj.y_centre;
+                z_centre = obj.z_centre;
+		level = obj.level;
+		parent = obj.parent;
+		block_data = obj.block_data;
+
+                memcpy(children,obj.children,sizeof(Octree***)*2);
+                for(int i=0;i<2;i++) {
+                        memcpy(children[i],obj.children[i],sizeof(Octree**)*2);
+                        for(int j=0;j<2;j++) {
+                                memcpy(children[i][j],obj.children[i][j],sizeof(Octree*)*2);
+                        }
+                }
+        }	
+
+
+	~Octree() {
 
 //		for(int i=0; i<2; i++) {
 //                        for(int j=0; j<2; j++) {
@@ -107,92 +129,90 @@ class octree {
 	void refine() {
 
 		int i, j, k;
-		
-		//define new octree nodes	
-		octree node[8];
-		
-		//assign newly created nodes to children 
-		int local_node_count = 0;	
-		for(k=0; k<2; k++) { 
-			for(j=0; j<2; j++) { 
-				for(i=0; i<2; i++) { 
-					this->children[i][j][k] = &node[local_node_count];
-					local_node_count++;	
-				}
-			}
-		}
-	
-		//assign dimensions to newly created children	
-		for(k=0; k<2; k++) { 
-			for(j=0; j<2; j++) { 
-				for(i=0; i<2; i++) {
+		double xmin, xmax, ymin, ymax, zmin, zmax;
+		double lev = this->level + 1;
 
-					if(i==0) { 
-						children[i][j][k]->block_data->x_min = this->x_min; 	
-						children[i][j][k]->block_data->x_max = this->x_centre; 	
-					}
-					else {
-						children[i][j][k]->block_data->x_min = this->x_centre; 	
-						children[i][j][k]->block_data->x_max = this->x_max; 	
-					} 
+		//creating children nodes
+                for(k=0; k<2; k++) {
+                        for(j=0; j<2; j++) {
+                                for(i=0; i<2; i++) {
+
+					if(i==0) {
+                                                xmin = this->x_min;
+                                                xmax = this->x_centre;
+                                        }
+                                        else {
+                                                xmin = this->x_centre;
+                                                xmax = this->x_max;
+                                        }
+
+                                        if(j==0) {
+                                                ymin = this->y_min;
+                                                ymax = this->y_centre;
+                                        }
+                                        else {
+                                                ymin = this->y_centre;
+                                                ymax = this->y_max;
+                                        }
+
+                                        if(k==0) {
+                                                zmin = this->z_min;
+                                                zmax = this->z_centre;
+                                        }
+                                        else {
+                                                zmin = this->z_centre;
+                                                zmax = this->z_max;
+                                        }
+
+					//creating new memory locations to children
+					children[i][j][k] = new Octree;
+
+					//creating new child object
+					Octree child(xmin, xmax, ymin, ymax, zmin, zmax, lev);
 				
-					if(j==0) {	
-						children[i][j][k]->block_data->y_min = this->y_min;	
-						children[i][j][k]->block_data->y_max = this->y_centre;	
-					}
-					else {
-						children[i][j][k]->block_data->y_min = this->y_centre;	
-						children[i][j][k]->block_data->y_max = this->y_max;	
-					}
-					
-					if(k==0) {
-						children[i][j][k]->block_data->z_min = this->z_min;	
-						children[i][j][k]->block_data->z_max = this->z_centre;	
-					}
-					else {
-						children[i][j][k]->block_data->z_min = this->z_centre;	
-						children[i][j][k]->block_data->z_max = this->z_max;	
-					}
+					//deleting the pushed node to the list
+					nodes.pop_back();
+
+					//assigning parent to the child
+					child.parent = this;	 
 				
+					//invoking copy constructor
+                                        *(this->children[i][j][k]) = child;
+                                }
+                        }
+                }
 
-					children[i][j][k]->block_data->calculate_grid_size();
-					children[i][j][k]->block_data->calculate_centre();
 
-				}
-			}
-		}
+//					children[i][j][k]->block_data->calculate_grid_size();
+//					children[i][j][k]->block_data->calculate_centre();
+
 
 		//assigning each child its siblings
-		int local_sibling_count;
-		for(i=0; i<8; i++) {
-			local_sibling_count = 0;
-			for(j=0; j<8; j++) {
-				if(i==j) continue;
-				node[i].siblings[local_sibling_count] = &node[j]; 
-				local_sibling_count++;
-			}
-		}
+//		int local_sibling_count;
+//		for(i=0; i<8; i++) {
+//			local_sibling_count = 0;
+//			for(j=0; j<8; j++) {
+//				if(i==j) continue;
+//				node[i].siblings[local_sibling_count] = &node[j]; 
+//				local_sibling_count++;
+//			}
+//		//}
 
-		//increment children level by 1 and parent to current node pointer
-		for(i=0; i<8; i++) {
-			node[i].level = level+1;
-			node[i].parent = this;
-		}
 	
 	}
 
 	void coarsen() {
 
 		//moving to its parent
-		this->current = this->parent;
+		//this->current = this->parent;
 
 		//deleting all children
-		for(int i=0; i<2; i++) { 
-			for(int j=0; j<2; j++) { 
-				for(int k=0; k<2; k++)  
-					this->current->children[i][j][k] = NULL;	
-			}
-		}
+//		for(int i=0; i<2; i++) { 
+//			for(int j=0; j<2; j++) { 
+//				for(int k=0; k<2; k++)  
+//					//this->current->children[i][j][k] = NULL;
+//			}
+//		}
 		
 		delete this;		
 		
@@ -218,24 +238,24 @@ class octree {
 	}
 
 	
-	//private:
+	private:
 	//each node has upto 8 children (2^3 for 3 dimensions) 
-	octree *children[2][2][2];
+	Octree *children[2][2][2];
 	
 	//each node stores a block of grid cells
 	Block *block_data;
 
 	//pointer to the parent
-	octree *parent;
+	Octree *parent;
 
 	//pointer to the current node
-	octree *current;
+//	Octree *current;
 
 	//level in the tree
 	int level;
 
 	//siblings
-	octree *siblings[7];
+	//Octree *siblings[7];
 
 	//node's block dimensions - temporary variables
 	double x_centre, y_centre, z_centre;
@@ -249,8 +269,8 @@ class octree {
 };
 
 //function declaration
-//void write_vtk(std::list<octree*>&);
-void write_vtk(std::vector<octree*>&);
+void write_vtk(std::list<Octree*>&);
+//void write_vtk(std::vector<Octree*>&);
 
 }
 #endif

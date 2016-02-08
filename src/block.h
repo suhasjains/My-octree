@@ -1,6 +1,6 @@
 #include <string.h>
 
-namespace myoctree {
+namespace myOctree {
 
 #define PAD 2
 #define NX_BLOCK 10
@@ -110,7 +110,7 @@ class Block {
 		dy = ( y_max - y_min ) / iNy; 
 		dz = ( z_max - z_min ) / iNz; 
 		
-		printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
+		//printf("dx=%g, dy=%g, dz=%g \n", dx, dy, dz);
 
 		x_centre = (x_min + x_max ) / 2.0;
                 y_centre = (y_min + y_max ) / 2.0;
@@ -121,7 +121,7 @@ class Block {
 		Field mesh_field(iNx+2*PAD,iNy+2*PAD,iNz+2*PAD);
 		*mesh = mesh_field;
 
-		printf("N=%d\n",mesh->N);
+		//printf("N=%d\n",mesh->N);
 
 	}
 
