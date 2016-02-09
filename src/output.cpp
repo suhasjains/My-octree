@@ -4,23 +4,21 @@
 namespace myOctree {
 
 
-long int get_point(int i, int j, int k) {
+long int get_point(int i, int j, int k, int Npx, int Npy) {
 
 	int I = i+1;
 	int J = j+1;
 	int K = k+1;
 	
 	long int n;
-	if(i==0)        n = K * J + I;
-	else            n = K * J * i + I;
 
+	n = k * Npx * Npy + j * Npx + I; 	
 
 	return n-1;
 } 
 
 
 void write_vtk(std::list<Octree*>& nodes) {
-//void write_vtk(std::vector<Octree*>& nodes) {
 
 
 
@@ -40,7 +38,7 @@ void write_vtk(std::list<Octree*>& nodes) {
 	long int nPoints = Npx * Npy * Npz * nodes.size();
 	long int nCells = NX_BLOCK * NY_BLOCK * NZ_BLOCK * nodes.size();
        	long int point[8]; 
-	int node_count = 1;
+	int node_count = 0;
 
 
 	fprintf(fp,"POINTS %ld double\n", nPoints);
@@ -73,18 +71,18 @@ void write_vtk(std::list<Octree*>& nodes) {
 
         for (std::list<Octree*>::iterator iterator = nodes.begin(), end = nodes.end(); iterator != end; ++iterator) {
 
-                for(int k = 0; k<Npz; k++) {
-                        for(int j = 0; j<Npy; j++) {
-                                for(int i = 0; i<Npx ; i++) {
+                for(int k = 0; k<NZ_BLOCK; k++) {
+                        for(int j = 0; j<NY_BLOCK; j++) {
+                                for(int i = 0; i<NX_BLOCK ; i++) {
 
-					point[0] = node_count*get_point(i,j,k);
-					point[1] = node_count*get_point(i+1,j,k);
-					point[2] = node_count*get_point(i,j+1,k);
-					point[3] = node_count*get_point(i+1,j+1,k);
-					point[4] = node_count*get_point(i,j,k+1);
-					point[5] = node_count*get_point(i+1,j,k+1);
-					point[6] = node_count*get_point(i,j+1,k+1);
-					point[7] = node_count*get_point(i+1,j+1,k+1);
+					point[0] = node_count*Npx*Npy*Npz + get_point(i,j,k,Npx,Npy);
+					point[1] = node_count*Npx*Npy*Npz + get_point(i+1,j,k,Npx,Npy);
+					point[2] = node_count*Npx*Npy*Npz + get_point(i,j+1,k,Npx,Npy);
+					point[3] = node_count*Npx*Npy*Npz + get_point(i+1,j+1,k,Npx,Npy);
+					point[4] = node_count*Npx*Npy*Npz + get_point(i,j,k+1,Npx,Npy);
+					point[5] = node_count*Npx*Npy*Npz + get_point(i+1,j,k+1,Npx,Npy);
+					point[6] = node_count*Npx*Npy*Npz + get_point(i,j+1,k+1,Npx,Npy);
+					point[7] = node_count*Npx*Npy*Npz + get_point(i+1,j+1,k+1,Npx,Npy);
 	
                                         fprintf(fp,"8 %ld %ld %ld %ld %ld %ld %ld %ld \n",point[0], point[1], point[2], point[3], point[4], point[5], point[6], point[7]);
                                 }

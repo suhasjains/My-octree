@@ -2,17 +2,13 @@
 #define MYOCTREE_OCTREE_H_
 #include <stdio.h>
 #include <list>
-//#include <vector>
 #include "block.h"
 
 namespace myOctree {
 
 
-//extern int block_counter;
-//extern int level;
 class Octree;
 extern std::list<Octree*> nodes;
-//extern std::vector<Octree*> nodes;
 
 
 
@@ -183,8 +179,6 @@ class Octree {
                 }
 
 
-//					children[i][j][k]->block_data->calculate_grid_size();
-//					children[i][j][k]->block_data->calculate_centre();
 
 
 		//assigning each child its siblings
@@ -203,6 +197,13 @@ class Octree {
 
 	void coarsen() {
 
+
+		if(this->isLeafNode()&&!(this->isRootNode()))  {
+
+			//delete this;
+			nodes.remove(this);
+
+		}
 		//moving to its parent
 		//this->current = this->parent;
 
@@ -214,7 +215,7 @@ class Octree {
 //			}
 //		}
 		
-		delete this;		
+		//delete this;		
 		
 	}
 	
@@ -270,7 +271,6 @@ class Octree {
 
 //function declaration
 void write_vtk(std::list<Octree*>&);
-//void write_vtk(std::vector<Octree*>&);
 
 }
 #endif
