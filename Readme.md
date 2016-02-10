@@ -3,23 +3,14 @@
 
  * Octree data structure 
  * Block based AMR
- * Static mesh generation
+ * Dynamic mesh generation
 
-
-
-## Change log
-
- * Added octree class
- * Added parent connection
- * Added children connection
- * Added refine function
- * Added coarsen function
- * Added siblings
- * Added level
- * Added dimensions
 
 ## Things to add
 
  * Add neighbors
- * output
- * boundary flags 
+ * boundary flags
+
+## Sample mes output
+
+![alt tag](https://raw.github.com/suhasjains/octree/master/images/samplemeshoutput.ps)  
