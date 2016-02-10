@@ -2,7 +2,7 @@ NAME 	:= myoctree
 OBDIR	:= ../OBJ/
 RUNDIR	:= ../RUN/
 
-OBJECTS =   $(OBDIR)octree.o $(OBDIR)output.o 
+OBJECTS =   $(OBDIR)myoctree.o $(OBDIR)octree.o $(OBDIR)block.o $(OBDIR)output.o 
 
 HEADER 	:= octree.h block.h output.h 
 
@@ -30,9 +30,17 @@ $(NAME): $(OBJECTS) $(RUNDIR)
 $(RUNDIR): 
 	@test -d $(RUNDIR) || mkdir $(RUNDIR)
 
+$(OBDIR)myoctree.o: myoctree.cpp $(HEADER)
+	@test -d $(OBDIR) || mkdir $(OBDIR)        
+	$(CXX) -c $(FLAGS) -o $(OBDIR)myoctree.o myoctree.cpp
+
 $(OBDIR)octree.o: octree.cpp $(HEADER)
 	@test -d $(OBDIR) || mkdir $(OBDIR)        
 	$(CXX) -c $(FLAGS) -o $(OBDIR)octree.o octree.cpp
+
+$(OBDIR)block.o: block.cpp $(HEADER)
+	@test -d $(OBDIR) || mkdir $(OBDIR)        
+	$(CXX) -c $(FLAGS) -o $(OBDIR)block.o block.cpp
 
 $(OBDIR)output.o: output.cpp $(HEADER)
 	@test -d $(OBDIR) || mkdir $(OBDIR)        
