@@ -12,5 +12,7 @@
  * boundary flags
 
 ## Sample mes output
+<p align="center">
+  <img src="images/samplemeshoutput.jpeg" width="350"/>
+</p>
 
-![alt tag](https://raw.github.com/suhasjains/octree/master/images/samplemeshoutput.ps)  
