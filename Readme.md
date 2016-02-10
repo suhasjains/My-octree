@@ -11,12 +11,8 @@
  * Add neighbors
  * boundary flags
 
-## Sample mes output
+## Sample mesh output
 <p align="center">
-  <img src="images/samplemeshoutput.jpeg" width="350"/>
+  <img src="images/samplemeshoutput.jpeg" width="500"/>
 </p>
 
-<<<<<<< HEAD
-=======
-![alt tag](https://raw.github.com/suhasjains/octree/master/images/samplemeshoutput.jpeg)  
->>>>>>> 583579bdca35997345771c5a3f553c6d50206edc
