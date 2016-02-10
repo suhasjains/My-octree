@@ -13,4 +13,4 @@
 
 ## Sample mes output
 
-![alt tag](https://raw.github.com/suhasjains/octree/master/images/samplemeshoutput.ps)  
+![alt tag](https://raw.github.com/suhasjains/octree/master/images/samplemeshoutput.jpeg)  
