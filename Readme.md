@@ -12,7 +12,12 @@
  * boundary flags
 
 ## Sample mesh output
-<p align="center">
-  <img src="images/samplemeshoutput.jpeg" width="500"/>
+<p align="left">
+  <img src="images/3d.eps" width="500"/>
+  <figcaption>3D view.</figcaption>
+</p>
+<p align="right">
+  <img src="images/2d.eps" width="500"/>
+  <figcaption>2D view.</figcaption>
 </p>
 
