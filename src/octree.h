@@ -47,10 +47,21 @@ class Octree {
 
 	//function to test if root node
 	bool isRootNode();
+
+	//function to test if the point lies inside the block
+	bool contains(double x, double y, double z);
+
+	//gets level of the node
+	int get_level();	
 		
 	//function to access block_data
 	Block* get_block_data();
 
+	//variable to know whether to refine the node or not
+	bool setToRefine;
+
+	//variable to know whether to coarsen the node or not
+	bool setToCoarsen;
 	
 	private:
 	//each node has upto 8 children (2^3 for 3 dimensions) 

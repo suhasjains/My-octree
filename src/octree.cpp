@@ -20,6 +20,18 @@ Block* Octree::get_block_data() {
     return block_data;
 }
 
+bool Octree::contains(double x, double y, double z) {
+
+	return x<=x_max && x>=x_min && y<=y_max && y>=y_min && z<=z_max && z>=z_min;
+
+}
+
+int Octree::get_level() {
+
+	return this->level;
+
+}
+
 void Octree::coarsen() {
     
     
@@ -151,7 +163,9 @@ Octree::Octree(const Octree &obj) {
     level = obj.level;
     parent = obj.parent;
     block_data = obj.block_data;
-    
+	setToRefine = obj.setToRefine;
+	setToCoarsen = obj.setToCoarsen;   
+ 
     memcpy(children,obj.children,sizeof(Octree***)*2);
     for(int i=0;i<2;i++) {
         memcpy(children[i],obj.children[i],sizeof(Octree**)*2);
@@ -170,9 +184,9 @@ Octree::Octree( double x1, double x2, double y1, double y2, double z1, double z2
         }
     }
     
-    if(level==0)
-        parent = NULL;
-    
+	parent = NULL;
+   	setToRefine = false;
+	setToCoarsen = false; 
     
     x_centre = (x_min + x_max ) / 2.0;
     y_centre = (y_min + y_max ) / 2.0;
@@ -202,9 +216,10 @@ Octree::Octree() {
         }
     }
     
-    if(level==0)
-        parent = NULL;
-    
+ 	parent = NULL;
+	setToRefine = false;
+	setToCoarsen = false;    
+
     //creating block to assign it to the data
     block_data = new Block;
     Block new_block;
