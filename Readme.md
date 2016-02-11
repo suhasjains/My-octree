@@ -13,11 +13,11 @@
 
 ## Sample mesh output
 <p align="left">
-  <img src="images/3d.eps" width="500"/>
+  <img src="images/3d.png" width="500"/>
   <figcaption>3D view.</figcaption>
 </p>
 <p align="right">
-  <img src="images/2d.eps" width="500"/>
+  <img src="images/2d.png" width="500"/>
   <figcaption>2D view.</figcaption>
 </p>
 
